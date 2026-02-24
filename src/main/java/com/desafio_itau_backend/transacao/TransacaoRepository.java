@@ -1,5 +1,6 @@
 package com.desafio_itau_backend.transacao;
 
+import com.desafio_itau_backend.Estatitica.EstatiticaDTo;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -20,14 +21,14 @@ public class TransacaoRepository {
         transacoes.clear();
     }
 
-    public DoubleSummaryStatistics estatitica(OffsetDateTime horaInicial) {
-        if (transacoes.isEmpty()){
-            return new DoubleSummaryStatistics();
-        }else {
+    public EstatiticaDTo estatitica(OffsetDateTime horaInicial) {
+        if (transacoes.isEmpty()) {
+            return new EstatiticaDTo();
+        } else {
             final BigDecimal[] valoresFiltrados = transacoes.stream().filter(t -> t.getDataHora().isAfter(horaInicial) ||
                     t.getDataHora().equals(horaInicial)).map(TransacaoRequest::getValor).toArray(BigDecimal[]::new);
             DoubleStream doubleStream = Arrays.stream(valoresFiltrados).mapToDouble(BigDecimal::doubleValue);
-            return  doubleStream.summaryStatistics();
+            return new EstatiticaDTo(doubleStream.summaryStatistics());
         }
     }
 }
